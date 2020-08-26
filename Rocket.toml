@@ -1,0 +1,19 @@
+[development]
+address = "localhost"
+template_dir = "www/templates"
+port = 9080
+workers = 1
+keep_alive = 5
+log = "normal"
+#secret_key = [randomly generated at launch]
+limits = { forms = 32768 }
+
+[production]
+address = "" # [<-- SERVER IP ADDRESS HERE]
+template_dir = "www/templates"
+port = 80
+workers = 1
+keep_alive = 5
+log = "normal"
+#secret_key = [randomly generated at launch]
+limits = { forms = 32768 }
