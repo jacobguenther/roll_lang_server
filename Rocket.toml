@@ -9,7 +9,7 @@ log = "normal"
 limits = { forms = 32768 }
 
 [production]
-address = "" # [<-- SERVER IP ADDRESS HERE]
+address = "localhost" # [<-- SERVER IP ADDRESS HERE]
 template_dir = "www/templates"
 port = 80
 workers = 1

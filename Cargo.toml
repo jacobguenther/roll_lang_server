@@ -6,14 +6,14 @@ edition = "2018"
 
 [dependencies]
 logging = "0.1.0"
-rocket = "0.4.3"
-serde_json = "1.0.53"
-tera = "0.11.20"
+rocket = "0.4.5"
+serde_json = "1.0.57"
+tera = "1.5.0"
 
 [dependencies.serde]
-version = "1.0.111"
+version = "1.0.115"
 features = ["derive"]
 
 [dependencies.rocket_contrib]
-version = "0.4.3"
+version = "0.4.5"
 features = ["tera_templates"]
