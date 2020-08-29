@@ -1,0 +1,3 @@
+[submodule "roll_lang_frontend"]
+	path = roll_lang_frontend
+	url = https://github.com/jacobguenther/roll_lang_frontend

@@ -5,10 +5,11 @@
 
 #[macro_use] extern crate rocket;
 
+use std::io; // Result
 use std::collections::HashMap;
 
 use rocket::State;
-use rocket::response::{Redirect};
+use rocket::response::{NamedFile, Redirect};
 use rocket::request::{Form};
 
 use rocket_contrib::{
@@ -25,6 +26,18 @@ fn index() -> Template {
 	let context: HashMap<String, String> = HashMap::new();
 	Template::render("index", context)
 }
+#[get("/help")]
+fn help() ->  io::Result<NamedFile> {
+	NamedFile::open("www/static/html/help.html")
+}
+#[get("/about")]
+fn about() -> io::Result<NamedFile> {
+	NamedFile::open("www/static/html/about.html")
+}
+#[get("/about/javascript")]
+fn licenses() -> io::Result<NamedFile> {
+	NamedFile::open("www/static/html/javascript.html")
+}
 
 fn main() {
 	rocket::ignite()
@@ -32,6 +45,9 @@ fn main() {
 		.mount("/",
 			routes![
 				index,
+				help,
+				about,
+				licenses,
 			])
 		.mount("/", StaticFiles::from("www/static/"))
 		// .manage(incidents_json)
