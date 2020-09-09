@@ -8,18 +8,21 @@
 use std::io; // Result
 use std::collections::HashMap;
 
-use rocket::State;
-use rocket::response::{NamedFile, Redirect};
-use rocket::request::{Form};
+// use rocket::State;
+use rocket::response::{
+	NamedFile,
+	// Redirect,
+};
+// use rocket::request::{Form};
 
 use rocket_contrib::{
 	templates::Template,
 	serve::StaticFiles,
 };
 
-use serde::{Deserialize, Serialize};
+// use serde::{Deserialize, Serialize};
 
-use tera::Context;
+// use tera::Context;
 
 #[get("/")]
 fn index() -> Template {
@@ -50,7 +53,7 @@ fn main() {
 				licenses,
 			])
 		.mount("/", StaticFiles::from("www/static/"))
-		// .manage(incidents_json)
+		// .manage(state)
 		// .register(catchers![not_found])
 		.launch();
 }

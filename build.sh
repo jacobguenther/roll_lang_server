@@ -5,4 +5,7 @@ cd roll_lang_frontend
 cd ..
 
 cargo build
+
+mkdir www
+
 cp -rv roll_lang_frontend/dist/* www/
