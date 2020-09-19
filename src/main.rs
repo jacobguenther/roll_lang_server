@@ -4,43 +4,24 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
 #[macro_use] extern crate rocket;
-
-use std::io; // Result
-use std::collections::HashMap;
-
-// use rocket::State;
-use rocket::response::{
-	NamedFile,
-	// Redirect,
-};
-// use rocket::request::{Form};
+#[macro_use] extern crate diesel;
+#[macro_use] extern crate lazy_static;
+extern crate rocket_auth_login as auth;
 
 use rocket_contrib::{
 	templates::Template,
 	serve::StaticFiles,
 };
 
-// use serde::{Deserialize, Serialize};
+mod db;
+mod models;
+mod schema;
+mod forms;
+mod routes;
+mod contexts;
 
-// use tera::Context;
-
-#[get("/")]
-fn index() -> Template {
-	let context: HashMap<String, String> = HashMap::new();
-	Template::render("index", context)
-}
-#[get("/help")]
-fn help() ->  io::Result<NamedFile> {
-	NamedFile::open("www/static/html/help.html")
-}
-#[get("/about")]
-fn about() -> io::Result<NamedFile> {
-	NamedFile::open("www/static/html/about.html")
-}
-#[get("/about/javascript")]
-fn licenses() -> io::Result<NamedFile> {
-	NamedFile::open("www/static/html/javascript.html")
-}
+use db::init_pool;
+use routes::*;
 
 fn main() {
 	rocket::ignite()
@@ -51,9 +32,19 @@ fn main() {
 				help,
 				about,
 				licenses,
+
+				logged_in,
+				login,
+				retry_login,
+				logout,
+				process_login,
+
+				create_account,
+				retry_create_account,
+				create_account_form,
 			])
 		.mount("/", StaticFiles::from("www/static/"))
-		// .manage(state)
+		.manage(init_pool())
 		// .register(catchers![not_found])
 		.launch();
 }
