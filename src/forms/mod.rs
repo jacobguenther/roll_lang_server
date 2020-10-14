@@ -34,7 +34,7 @@ pub struct Logout {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct LoginCookie {
-	userid: i32,
+	pub player_id: i32,
 	pub name: String,
 }
 
@@ -88,7 +88,7 @@ impl AuthorizeForm for Login {
 
         if player.name == self.name && player.password == self.password {
             return Ok(LoginCookie {
-                userid: player.id,
+                player_id: player.id,
                 name: player.name,
             })
         }
@@ -127,3 +127,35 @@ impl<'a, 'r> FromRequest<'a, 'r> for LoginCookie {
     }
 }
 
+
+#[derive(Debug, Clone, FromForm, Serialize, Deserialize)]
+pub struct UpdateName {
+    pub auth_password_for_name: String,
+    pub new_name: String,
+}
+#[derive(Debug, Clone, FromForm, Serialize, Deserialize)]
+pub struct UpdatePassword {
+    pub auth_password: String,
+    pub new_password: String,
+    pub confirm_password: String,
+}
+#[derive(Debug, Clone, FromForm, Serialize, Deserialize)]
+pub struct UpdateEmail {
+    pub auth_password_for_email: String,
+    pub new_email: String,
+}
+#[derive(Debug, Clone, FromForm, Serialize, Deserialize)]
+pub struct DeletePlayer {
+    pub auth_password_for_delete: String,
+}
+
+#[derive(Debug, Clone, FromForm, Serialize, Deserialize)]
+pub struct Macro {
+    pub name: String,
+    pub source: String,
+    pub has_shortcut: bool,
+}
+#[derive(Debug, Clone, FromForm, Serialize, Deserialize)]
+pub struct MacroName {
+    pub name: String,
+}
