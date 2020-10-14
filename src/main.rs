@@ -21,7 +21,9 @@ mod routes;
 mod contexts;
 
 use db::init_pool;
-use routes::*;
+use routes::{
+	*,
+};
 
 fn main() {
 	rocket::ignite()
@@ -36,12 +38,30 @@ fn main() {
 				logged_in,
 				login,
 				retry_login,
-				logout,
-				process_login,
 
 				create_account,
 				retry_create_account,
-				create_account_form,
+
+				account,
+				account_redirect,
+
+				api::player::create,
+				api::player::delete,
+				api::player::login,
+				api::player::logout,
+
+				api::player::settings::update_name,
+				api::player::settings::update_email,
+				api::player::settings::update_password,
+
+				api::player::macros::all,
+				// api::player::macros::get,
+				api::player::macros::update_create,
+				api::player::macros::new,
+				api::player::macros::update,
+				api::player::macros::update_source,
+				api::player::macros::update_shortcut,
+				api::player::macros::delete,
 			])
 		.mount("/", StaticFiles::from("www/static/"))
 		.manage(init_pool())
