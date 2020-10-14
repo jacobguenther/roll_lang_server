@@ -13,16 +13,16 @@ pub struct InsertablePlayer {
 	pub hash_salt: String,
 	pub is_admin: bool,
 }
-impl InsertablePlayer {
-    pub fn from_player(player: Player) -> InsertablePlayer {
-        InsertablePlayer {
+impl From<Player> for InsertablePlayer {
+	fn from(player: Player) -> InsertablePlayer {
+		InsertablePlayer {
 			name: player.name,
 			email: player.email,
 			password: player.password,
 			hash_salt: player.hash_salt,
 			is_admin: player.is_admin,
-        }
-    }
+		}
+	}
 }
 impl From<forms::CreateAccount> for InsertablePlayer {
 	fn from(form: forms::CreateAccount) -> InsertablePlayer {
