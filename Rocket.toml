@@ -5,7 +5,7 @@ port = 9080
 workers = 1
 keep_alive = 5
 log = "normal"
-#secret_key = [randomly generated at launch]
+secret_key = "ot023skcNuA7UAnQonI72Nhmyrbzoapeu59e8877m0A="
 limits = { forms = 32768 }
 
 [production]
@@ -15,5 +15,5 @@ port = 80
 workers = 1
 keep_alive = 5
 log = "normal"
-#secret_key = [randomly generated at launch]
+#secret_key = [randomly generated at launch] or use "openssl rand -base64 32" to generate one
 limits = { forms = 32768 }
