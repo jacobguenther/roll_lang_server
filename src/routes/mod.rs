@@ -1,46 +1,35 @@
 // File: src/routes/mod.rs
 
+pub mod api;
+
 use rocket::{
-	// State,
-	http::{
-		Cookie,
-		Cookies,
-		RawStr,
-	},
+	http::RawStr,
 	response::{
 		Redirect,
 		Flash,
 	},
-	request::{
-		FlashMessage,
-		Form,
-	},
+	request::FlashMessage,
 };
 
-use rocket_contrib::{
-	templates::Template,
-	// serve::StaticFiles,
-};
+use rocket_contrib::templates::Template;
 
 use auth::authorization::*;
 
-use crate::forms;
 use crate::forms::LoginCookie;
-
-use crate::db::DbConn;
-
 use crate::contexts;
-
+use crate::db::DbConn;
 use crate::models::player::*;
 
 #[get("/")]
 pub fn index(logged_in_opt: Option<AuthCont<LoginCookie>>, flash: Option<FlashMessage>) -> Template {
 	let mut context = contexts::Index::default();
 	if let Some(flash_message) = flash {
-		if flash_message.name().contains("login_success") {
+		if flash_message.name() == "login_success" {
 			context.login_success = true;
-		} else if flash_message.name().contains("logout_success") {
+		} else if flash_message.name() == "logout_success" {
 			context.base.logout_success = true;
+		} else if flash_message.name() == "deleted_account" {
+			context.deleted_account = true;
 		}
 	};
 	if let Some(logged_in) = logged_in_opt {
@@ -78,6 +67,8 @@ pub fn licenses(logged_in_opt: Option<AuthCont<LoginCookie>>) -> Template {
 	Template::render("javascript", context)
 }
 
+
+
 #[get("/create_account")]
 pub fn create_account(logged_in_opt: Option<AuthCont<LoginCookie>>, flash: Option<FlashMessage>) -> Result<Template, Flash<Redirect>> {
 	get_create_account("", "", logged_in_opt, flash)
@@ -92,43 +83,23 @@ pub fn get_create_account(name: &str, email: &str, logged_in_opt: Option<AuthCon
 	}
 	let mut context = contexts::CreateAccount::new(name, email);
 	if let Some(flash_message) = flash {
-		if flash_message.name().contains("password_too_short") {
+		if flash_message.name() == "password_too_short" {
 			context.password_too_short = true;
-		} else if flash_message.name().contains("passwords_dont_match") {
+		} else if flash_message.name() == "passwords_dont_match" {
 			context.passwords_dont_match = true;
-		} else if flash_message.name().contains("name_or_email_taken") {
+		} else if flash_message.name() == "name_or_email_taken" {
 			context.name_or_email_taken = true;
-		} else if flash_message.name().contains("unknown_error") {
+		} else if flash_message.name() == "unknown_error" {
 			context.unknown_error = true;
 		}
 	};
 
 	Ok(Template::render("create_account", context))
 }
-#[post("/create_account", data = "<create_form>")]
-pub fn create_account_form(create_form: Form<forms::CreateAccount>, connection: DbConn) -> Flash<Redirect> {
-	let form = create_form.clone();
-	if Player::id_from_name(&form.player_name, &connection).is_ok() ||
-		Player::id_from_email(&form.email, &connection).is_ok()
-	{
-		return Flash::new(Redirect::to("/create_account"), "name_or_email_taken", "");
-	}
 
-	let password_problem_redirect_url = format!("/create_account?name={}&email={}", form.player_name, form.email);
-	if form.password.len() < 8 {
-		return Flash::new(Redirect::to(password_problem_redirect_url), "password_too_short", "");
-	} else if form.password != form.confirm_password {
-		return Flash::new(Redirect::to(password_problem_redirect_url), "passwords_dont_match", "");
-	}
-	let player = Player::insert(form.into(), &connection);
-	match player {
-		Ok(_) => Flash::new(Redirect::to("/login"), "create_account_success", ""),
-		Err(_) => Flash::new(Redirect::to("/create_account"), "unkown_error", "")
-	}
-}
 
 #[get("/login", rank=1)]
-pub fn logged_in(_player: AuthCont<LoginCookie>) -> Redirect {
+pub fn logged_in(_logged_in: AuthCont<LoginCookie>) -> Redirect {
 	Redirect::to("/")
 }
 #[get("/login", rank=3)]
@@ -142,32 +113,59 @@ pub fn retry_login(name: &RawStr, flash: Option<FlashMessage>) -> Template {
 fn get_login(name: &str, flash: Option<FlashMessage>) -> Template {
 	let mut context = contexts::Login::new(name);
 	if let Some(flash_message) = flash {
-		if flash_message.name().contains("login_fail") {
+		if flash_message.name() == "login_fail" {
 			context.login_fail = true;
 		}
 	};
 	Template::render("login", context)
 }
-#[post("/login", data = "<login_form>")]
-pub fn process_login(login_form: Form<forms::Login>, mut cookies: Cookies) -> Flash<Redirect> {
-	let login = login_form.clone();
-	match login.authenticate() {
-		Ok(cookie) => {
-			let cookie_id = forms::Login::cookie_id();
-			let contents = cookie.store_cookie();
-			cookies.add_private(Cookie::new(cookie_id, contents));
-			Flash::new(Redirect::to("/"), "login_success", "")
-		},
-		Err(_) => {
-			let err_redirect_url = format!("/login?name={}", login.name);
-			Flash::new(Redirect::to(err_redirect_url), "login_fail", "")
+
+#[get("/account", rank=1)]
+pub fn account(logged_in: AuthCont<LoginCookie>, flash: Option<FlashMessage>, connection: DbConn) -> Template {
+	let email = match Player::email_from_id(logged_in.cookie.player_id, &connection) {
+		Ok(email) => email,
+		Err(_query_error) => String::new(),
+	};
+	let mut context = contexts::Account::new(&logged_in.cookie.name, &email);
+	context.base.logged_in = true;
+	context.base.display_name = logged_in.cookie.name;
+
+	if let Some(flash_message) = flash {
+		if flash_message.name() == "update_name_wrong_password" {
+			context.update_name_wrong_password = true;
+		} else if flash_message.name() == "update_name_taken" {
+			context.update_name_taken = true;
+		} else if flash_message.name() == "update_email_wrong_password" {
+			context.update_email_wrong_password = true;
+		} else if flash_message.name() == "update_email_taken" {
+			context.update_email_taken = true;
+		} else if flash_message.name() == "update_password_wrong_password" {
+			context.update_password_wrong_password = true;
+		} else if flash_message.name() == "update_password_dont_match" {
+			context.update_password_dont_match = true;
+		} else if flash_message.name() == "update_password_too_short" {
+			context.update_password_too_short = true;
+		} else if flash_message.name() == "update_password_too_long" {
+			context.update_password_too_long = true;
+		} else if flash_message.name() == "update_password_missing_characters" {
+			context.update_password_missing_characters = true;
+		} else if flash_message.name() == "delete_account_wrong_password" {
+			context.delete_account_wrong_password = true;
+		} else if flash_message.name() == "changed_name" {
+			context.changed_name = true;
+		} else if flash_message.name() == "changed_email" {
+			context.changed_email = true;
+		} else if flash_message.name() == "changed_password" {
+			context.changed_password = true;
+		} else if flash_message.name() == "unknown_error" {
+			context.unknown_error = true;
 		}
-	}
+	};
+
+	Template::render("account", context)
 }
-#[post("/logout")]
-pub fn logout(player: Option<LoginCookie>, mut cookies: Cookies) -> Flash<Redirect> {
-	if let Some(_) = player {
-		cookies.remove_private(Cookie::named(forms::LoginCookie::cookie_id()));
-	}
-	Flash::new(Redirect::to("/"), "logout_success", "")
+
+#[get("/account", rank=2)]
+pub fn account_redirect() -> Redirect {
+	Redirect::to("/login")
 }
