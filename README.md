@@ -2,7 +2,9 @@
 
 Roll Lang is a domain specific language for interpreting common RPG and tabletop game dice rolls and math operations. You can check out the [demo](https://roll.quaternion.site), [help](https://roll.quaternion.site/help), or [about](https://roll.quaternion.site/about) pages to find out more.
 
-## Building
+This repository and its companion repositories [roll_lang_frontend](https://github.com/jacobguenther/roll_lang_frontend) and [roll_lang](https://github.com/jacobguenther/roll_lang) use [github projects](https://github.com/jacobguenther?tab=projects) to manage development.
+
+## Building and Running Locally
 
 clone this repository
 
@@ -23,7 +25,5 @@ install wasm-pack
 then run
 
 `bash build.sh`
-
-Note: wasm-pack will give some errors but it is fine
 
 you can find the website at `localhost:9080`
