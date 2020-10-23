@@ -44,3 +44,7 @@ you can find the website at `localhost:9080`
 This repository and its companion repositories [roll_lang_frontend](https://github.com/jacobguenther/roll_lang_frontend) and [roll_lang](https://github.com/jacobguenther/roll_lang) use [github projects](https://github.com/jacobguenther?tab=projects) to track development.
 
 This project uses the (git-flow)[https://nvie.com/posts/a-successful-git-branching-model/] branching model.
+
+## License
+
+The majority of the code in this repository is licensed under the [GNU General Public License v3](https://www.gnu.org/licenses/gpl-3.0.en.html).
