@@ -2,28 +2,45 @@
 
 Roll Lang is a domain specific language for interpreting common RPG and tabletop game dice rolls and math operations. You can check out the [demo](https://roll.quaternion.site), [help](https://roll.quaternion.site/help), or [about](https://roll.quaternion.site/about) pages to find out more.
 
-This repository and its companion repositories [roll_lang_frontend](https://github.com/jacobguenther/roll_lang_frontend) and [roll_lang](https://github.com/jacobguenther/roll_lang) use [github projects](https://github.com/jacobguenther?tab=projects) to manage development.
-
 ## Building and Running Locally
 
-clone this repository
+Clone this repository
 
 `git clone https://github.com/jacobguenther/roll_lang_server.git`
 
 `cd roll_lang_server`
 
-get the submodules
+Get the submodules
 
 `git submodule init`
 
 `git submodule update`
 
-install wasm-pack
+Install wasm-pack
 
 `curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh`
 
-then run
+You will have to setup PostgreSQL on your own for now.
+
+Install diesel cli for managing database migrations
+
+`cargo install diesel-cli`
+
+`diesel migration run`
+
+Then build the project
 
 `bash build.sh`
 
+To launch the application enter
+
+`cargo run`
+
 you can find the website at `localhost:9080`
+
+
+## Developers
+
+This repository and its companion repositories [roll_lang_frontend](https://github.com/jacobguenther/roll_lang_frontend) and [roll_lang](https://github.com/jacobguenther/roll_lang) use [github projects](https://github.com/jacobguenther?tab=projects) to track development.
+
+This project uses the (git-flow)[https://nvie.com/posts/a-successful-git-branching-model/] branching model.
