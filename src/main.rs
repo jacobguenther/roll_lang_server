@@ -45,6 +45,7 @@ fn main() {
 				account,
 				account_redirect,
 
+				api::player::is_logged_in,
 				api::player::create,
 				api::player::delete,
 				api::player::login,

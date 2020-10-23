@@ -17,6 +17,7 @@ use rocket::{
 		Form,
 	},
 };
+use rocket_contrib::json::Json;
 
 use auth::authorization::*;
 
@@ -24,6 +25,14 @@ use crate::forms;
 use crate::forms::LoginCookie;
 use crate::db::DbConn;
 use crate::models::player::*;
+
+#[get("/api/player/logged_in")]
+pub fn is_logged_in(logged_in: Option<AuthCont<LoginCookie>>) -> Json<bool> {
+	match logged_in {
+		Some(_) => Json(true),
+		None => Json(false),
+	}
+}
 
 #[post("/api/player/create", data = "<form>")]
 pub fn create(form: Form<forms::CreateAccount>, connection: DbConn) -> Flash<Redirect> {
