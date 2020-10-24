@@ -45,6 +45,8 @@ fn main() {
 				account,
 				account_redirect,
 
+				// get_shader,
+
 				api::player::is_logged_in,
 				api::player::create,
 				api::player::delete,

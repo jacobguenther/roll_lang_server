@@ -2,6 +2,8 @@
 
 pub mod api;
 
+use std::fs;
+
 use rocket::{
 	http::RawStr,
 	response::{
@@ -12,6 +14,7 @@ use rocket::{
 };
 
 use rocket_contrib::templates::Template;
+use rocket_contrib::json::Json;
 
 use auth::authorization::*;
 
@@ -66,8 +69,13 @@ pub fn licenses(logged_in_opt: Option<AuthCont<LoginCookie>>) -> Template {
 	}
 	Template::render("javascript", context)
 }
-
-
+#[get("/assets/shaders/<name>")]
+pub fn get_shader(name: String) -> Result<Json<String>, String> {
+	match fs::read_to_string(&format!("/assets/shaders/{}", name)) {
+		Ok(source) => Ok(Json(source)),
+		Err(_e) => Err(format!("Shader {} does not exist!", name)),
+	}
+}
 
 #[get("/create_account")]
 pub fn create_account(logged_in_opt: Option<AuthCont<LoginCookie>>, flash: Option<FlashMessage>) -> Result<Template, Flash<Redirect>> {
