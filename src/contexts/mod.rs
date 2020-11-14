@@ -22,6 +22,7 @@ pub struct Index {
 	pub base: Base,
 	pub login_success: bool,
 	pub deleted_account: bool,
+	pub map_levels: Vec<MapLevel>,
 }
 impl Default for Index {
 	fn default() -> Index {
@@ -29,10 +30,71 @@ impl Default for Index {
 			base: Base::default(),
 			login_success: false,
 			deleted_account: false,
+			map_levels: vec!(MapLevel::default()),
 		}
 	}
 }
-
+#[derive(Debug, Serialize, Deserialize)]
+pub struct MapLevel {
+	name: String,
+	height: u32,
+	layers: Vec<LayerE>,
+}
+impl Default for MapLevel {
+	fn default() -> MapLevel {
+		MapLevel {
+			name: "default".to_owned(),
+			height: 0,
+			layers: vec!(LayerE::Grid(GridLayer::default())),
+		}
+	}
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub enum LayerE {
+	Grid(GridLayer),
+	Image(ImageLayer)
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GridLayer {
+	scale: u32,
+	grid_count: u32,
+	grid_size: u32,
+	horizontal_offset: i32,
+	vertical_offset: i32,
+}
+impl Default for GridLayer {
+	fn default() -> GridLayer {
+		GridLayer {
+			scale: 100,
+			grid_count: 32,
+			grid_size: 64,
+			horizontal_offset: 0,
+			vertical_offset: 0,
+		}
+	}
+}
+#[derive(Debug, Serialize, Deserialize)]
+pub struct ImageLayer {
+	name: String,
+	path: String,
+	size: (u32, u32),
+	scale: u32,
+}
+/*
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Layer {
+	layer_type: String,
+	scale: u32,
+}
+impl Default for Layer {
+	fn default() -> Layer {
+		Layer {
+			layer_type: "grid".to_owned(),
+			scale: 100,
+		}
+	}
+}
+*/
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Login {
